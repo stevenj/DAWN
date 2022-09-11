@@ -463,6 +463,12 @@ int better_ap_available(ap *kicking_ap, probe_entry *own_probe, int own_score, s
     return better_ap_found;
 }
 
+void debug_dump(int kicked_clients int, client* j , ap* kicking_ap) {
+    dawnlog_info("kicked_clients == %d", kick_clients);    
+    dawnlog_info("j == %p", j);    
+    dawnlog_info("kicking_ap = %p", kicking_ap);
+}
+
 int kick_clients(struct dawn_mac bssid_mac, uint32_t id) {
     dawnlog_debug_func("Entering...");
 
@@ -484,6 +490,7 @@ int kick_clients(struct dawn_mac bssid_mac, uint32_t id) {
     client *j = *client_find_first_bc_entry(kicking_ap->bssid_addr, dawn_mac_null, false);
 
     // Go through clients: only kick one each time (not sure why, was in original algorithm...)
+    debug_dump(kicked_clients,j,ap);
     while (kicked_clients == 0 && j  != NULL && mac_is_equal_bb(j->bssid_addr, kicking_ap->bssid_addr)) {
         struct kicking_nr *kick_nr_list = NULL;
 
@@ -597,7 +604,7 @@ int kick_clients(struct dawn_mac bssid_mac, uint32_t id) {
 
                             if (!sync_kick)
                             {
-                                client_array_delete(j, false);
+                                j = client_array_delete(j, false);
 
                                 // don't delete clients in a row. use update function again...
                                 // -> chan_util update, ...
@@ -631,7 +638,10 @@ int kick_clients(struct dawn_mac bssid_mac, uint32_t id) {
         remove_kicking_nr_list(kick_nr_list);
         kick_nr_list = NULL;
 
-        j = j->next_entry_bc;
+        if (j != NULL) {
+            j = j->next_entry_bc;
+        }
+        debug_dump(kicked_clients,j,ap);
     }
 
     if (dawn_metric.set_hostapd_nr == 2)
