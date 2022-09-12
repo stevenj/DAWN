@@ -466,7 +466,7 @@ int better_ap_available(ap *kicking_ap, probe_entry *own_probe, int own_score, s
 void debug_dump(int kicked_clients, client* j , ap* kicking_ap);
 
 void debug_dump(int kicked_clients, client* j , ap* kicking_ap) {
-    dawnlog_info("kicked_clients == %d", kick_clients);    
+    dawnlog_info("kicked_clients == %d", kicked_clients);    
     dawnlog_info("j == %p", j);    
     dawnlog_info("kicking_ap = %p", kicking_ap);
 }
